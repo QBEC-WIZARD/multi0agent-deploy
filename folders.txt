@@ -1,0 +1,46 @@
+/multi0agent/
+|
++--- agents/
+|    +--- __init__.py
+|    +--- clickhouse.py
+|    +--- orchestrator.py  <-- NEW
+|    +--- supabase.py
+|
++--- connectors/
+|    +--- __init__.py
+|    +--- mcp_client.py
+|
++--- venv/
+|
++--- .env
++--- context.txt
++--- flow.txt
++--- folders.txt
++--- mcp_config.json
++--- main.py              <-- RENAMED
+
+
+
+
+
+
+
+
+-----------------------------------------
+
+mcp-clickhouse
+
+
+mcp-clickhouse/
+├── Dockerfile
+├── LICENSE
+├── README.md
+├── mcp_clickhouse/         # Your existing Python source code
+├── pyproject.toml
+├── test-services/
+├── tests/
+├── uv.lock
+├── udf_docs/               # [-- NEW --] The folder for your documentation
+│   ├── check_case_complexity.md
+│   └── check_timing_analysis.md
+└── ingest_docs.py          # [-- NEW --] The script to build the vector DB

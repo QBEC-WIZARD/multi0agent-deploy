@@ -1,0 +1,90 @@
+[
+    {
+        "view_name": "activity_pair_thresholds_analyzer_mortgage_events",
+        "analysis_type": "Activity Pair Thresholds Analysis",
+        "dataset": "mortgage_events",
+        "description": "Provides a statistical profile for each sequential activity pair (transition).",
+        "udf_required": null,
+        "sql_template_path": "activity_pair_thresholds.sql"
+    },
+    {
+        "view_name": "case_complexity_analyzer_mortgage_events",
+        "analysis_type": "Case Complexity Analysis",
+        "dataset": "mortgage_events",
+        "description": "Calculates a composite Z-score to identify statistically complex outlier cases.",
+        "udf_required": null,
+        "sql_template_path": "case_complexity_analyzer.sql"
+    },
+    {
+        "view_name": "incomplete_cases_analyzer_mortgage_events",
+        "analysis_type": "Incomplete Cases Analysis",
+        "dataset": "mortgage_events",
+        "description": "Identifies cases that have not reached a defined completion state.",
+        "udf_required": null,
+        "sql_template_path": "incomplete_cases.sql"
+    },
+    {
+        "view_name": "long_running_cases_analyzer_mortgage_events",
+        "analysis_type": "Long Running Cases Analysis",
+        "dataset": "mortgage_events",
+        "description": "Extracts raw data for hybrid analysis of long-running outlier cases.",
+        "udf_required": null,
+        "sql_template_path": "long_running_cases.sql"
+    },
+    {
+        "view_name": "resource_performance_analyzer_mortgage_events",
+        "analysis_type": "Resource Performance Analysis",
+        "dataset": "mortgage_events",
+        "description": "Provides a comprehensive performance profile for each resource. Uses the `check_resource_performance` UDF.",
+        "udf_required": "check_resource_performance",
+        "sql_template_path": "resource_performance.sql"
+    },
+    {
+        "view_name": "resource_switches_analyzer_mortgage_events",
+        "analysis_type": "Resource Switches Analysis",
+        "dataset": "mortgage_events",
+        "description": "Identifies cases with a high number of handoffs between resources. Uses the `check_resource_switches` UDF.",
+        "udf_required": "check_resource_switches",
+        "sql_template_path": "resource_switches.sql"
+    },
+    {
+        "view_name": "reworked_activities_analyzer_mortgage_events",
+        "analysis_type": "Reworked Activities Analysis",
+        "dataset": "mortgage_events",
+        "description": "Identifies rework and operational overhead. Uses the `check_operational_overhead` UDF.",
+        "udf_required": "check_operational_overhead",
+        "sql_template_path": "reworked_activities.sql"
+    },
+    {
+        "view_name": "sop_deviation_analyzer_mortgage_events",
+        "analysis_type": "SOP Deviation Analysis",
+        "dataset": "mortgage_events",
+        "description": "Identifies and counts all different process variants (paths) taken in the data.",
+        "udf_required": null,
+        "sql_template_path": "sop_deviation.sql"
+    },
+    {
+        "view_name": "sop_statistics_analyzer_mortgage_events",
+        "analysis_type": "SOP Pattern Statistics Analysis",
+        "dataset": "mortgage_events",
+        "description": "Generates a detailed statistical profile for each process variant.",
+        "udf_required": null,
+        "sql_template_path": "sop_statistics.sql"
+    },
+    {
+        "view_name": "timing_analysis_analyzer_mortgage_events",
+        "analysis_type": "Timing Analysis",
+        "dataset": "mortgage_events",
+        "description": "Identifies activities that act as significant bottlenecks.",
+        "udf_required": null,
+        "sql_template_path": "timing_analysis.sql"
+    },
+    {
+        "view_name": "timing_violations_analyzer_mortgage_events",
+        "analysis_type": "Timing Violations Analysis",
+        "dataset": "mortgage_events",
+        "description": "Finds the most significant time gaps between activities.",
+        "udf_required": null,
+        "sql_template_path": "timing_violations.sql"
+    }
+]

@@ -1,0 +1,1 @@
+SELECT * FROM default.sop_statistics_analyzer_mortgage_events;

@@ -1,0 +1,1 @@
+SELECT * FROM default.case_complexity_analyzer_mortgage_events;

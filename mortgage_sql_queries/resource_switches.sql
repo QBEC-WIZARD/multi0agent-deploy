@@ -1,0 +1,1 @@
+SELECT * FROM default.resource_switches_analyzer_mortgage_events;

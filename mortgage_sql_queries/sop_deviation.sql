@@ -1,0 +1,1 @@
+SELECT * FROM default.sop_deviation_analyzer_mortgage_events;

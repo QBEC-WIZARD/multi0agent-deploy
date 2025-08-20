@@ -1,0 +1,49 @@
+# Project Flow: multi0agent
+
+This document outlines the end-to-end workflow of the application when a user submits a query, reflecting the final project structure.
+
+## 1. User Input
+- The user runs the `main.py` script from the command line.
+- The script presents an interactive prompt, e.g., "You: ".
+- The user types a question in natural language (e.g., "how many users signed up last week?" or "show me the event log for error code 500").
+
+## 2. Orchestration & Routing
+- The user's input is captured and placed into the LangGraph `AgentState`.
+- The graph's entry point is the **Orchestrator Node**, whose logic is defined in `agents/orchestrator.py`.
+- The Orchestrator LLM analyzes the user's query for specific keywords and context (e.g., "users", "profiles" vs. "logs", "analytics").
+- Based on its analysis, the Orchestrator makes a decision and updates the `next_node` field in the `AgentState` to either "supabase_analyst" or "clickhouse_analyst".
+
+## 3. Conditional Branching (LangGraph)
+- LangGraph, running within `main.py`, reads the `next_node` value from the `AgentState`.
+- It acts as a switch, directing the workflow down one of two defined paths.
+
+## 4. Path A: The ClickHouse Analyst
+- **If `next_node` is "clickhouse_analyst":**
+- The flow is passed to the **ClickHouse Agent Node**, which uses the agent logic defined in `agents/clickhouse.py`.
+- This agent's first step is to ensure it can communicate with its database. It uses the connector from `connectors/mcp_client.py`.
+- The `mcp_client` connector reads the `mcp_config.json` file and uses the `mcp_use` library to start the ClickHouse server as a managed, sandboxed subprocess.
+- The ClickHouse agent, now connected, takes the user's original query, generates a valid ClickHouse SQL query, executes it, and retrieves the result.
+
+## 5. Path B: The Supabase Analyst
+- **If `next_node` is "supabase_analyst":**
+- The flow is passed to the **Supabase Agent Node**, which uses the agent logic defined in `agents/supabase.py`.
+- This agent uses LangChain's standard SQL Toolkit to connect to the database.
+- It reads the `SUPABASE_CONNECTION_STRING` directly from the `.env` file to establish the connection.
+- The Supabase agent takes the user's original query, generates a valid PostgreSQL query, executes it against the live Supabase database, and retrieves the result.
+
+## 6. Output & Completion
+- The specialist agent (either ClickHouse or Supabase) places its final answer into the `messages` list within the `AgentState`.
+- The agent's path in the graph then points to `END`.
+- LangGraph concludes the execution for the current request.
+- The `main.py` script extracts the final message from the state and prints it to the user's console.
+- The system then waits for the next user input.
+
+## 7. Cleanup
+- When the user quits the main script (e.g., by typing "exit"), the `finally` block in `main.py` is executed.
+- This block calls the `mcp_client` to gracefully shut down the ClickHouse server subprocess, ensuring no orphaned processes are left running.
+
+
+
+
+
+1 . orchestrator -> if  ( clickhosur or supabase ) - > clickhosue node or supabas node 

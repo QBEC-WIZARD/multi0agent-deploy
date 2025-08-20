@@ -1,0 +1,1 @@
+SELECT * FROM default.reworked_activities_analyzer_mortgage_events;

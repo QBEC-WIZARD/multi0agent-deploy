@@ -1,0 +1,20 @@
+# Project Context: multi0agent
+
+## 1. Project Goal
+... (no change) ...
+
+## 2. Core Architecture
+- **Application Runner (`main.py`):** The main entry point of the system. Its sole responsibility is to load all components, compile the LangGraph workflow, and manage the interactive user chat session.
+- **Orchestrator Agent (`agents/orchestrator.py`):** The "brain" of the system. Contains the agent logic that analyzes a user's query and decides which specialist to route the task to.
+- **ClickHouse Specialist (`agents/clickhouse.py`):** ... (no change) ...
+- **Supabase Specialist (`agents/supabase.py`):** ... (no change) ...
+
+
+## 3. Technology Stack
+- **Project Name:** multi0agent
+- **Orchestration Framework:** LangGraph (for creating the stateful, multi-agent workflow).
+- **Agent & Tool Framework:** LangChain.
+- **LLM Provider:** Groq (via `langchain-groq`).
+- **ClickHouse Management:** `mcp_use` and `uv` (via `connectors/mcp_client.py`).
+- **Supabase/PostgreSQL Driver:** `psycopg2-binary`.
+- **Environment Management:** Python `venv` and `python-dotenv`.

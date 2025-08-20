@@ -1,0 +1,1 @@
+SELECT * FROM default.incomplete_cases_analyzer_mortgage_events;

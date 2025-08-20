@@ -1,0 +1,1 @@
+SELECT * FROM default.activity_pair_thresholds_analyzer_mortgage_events;

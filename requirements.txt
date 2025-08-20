@@ -1,0 +1,25 @@
+# LangChain and LangGraph core components
+langchain
+langgraph
+langchain-community
+
+# LLM provider
+langchain-groq
+
+# Environment and configuration management
+python-dotenv
+
+# MCP for local ClickHouse server management
+mcp_use
+uv
+
+# Database drivers and toolkits
+psycopg2-binary  # For PostgreSQL (Supabase)
+SQLAlchemy       # LangChain's SQL toolkit dependency
+
+fastapi
+uvicorn
+
+langchain_openai
+
+clickhouse_connect
