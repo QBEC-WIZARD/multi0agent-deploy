@@ -23,3 +23,5 @@ uvicorn
 langchain_openai
 
 clickhouse_connect
+
+langchain_google_genai

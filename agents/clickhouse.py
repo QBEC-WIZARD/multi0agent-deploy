@@ -74,27 +74,30 @@ import os
 #     - My final action MUST be to call the `run_select_query()` tool and pass it the `sql_query` that was returned by the `read_sql_query_file` tool.
 # """
 
+# agents/clickhouse.py
+
 import json
 import os
-from langchain_groq import ChatGroq # Or your AzureChatOpenAI
+from langchain_openai import AzureChatOpenAI
 from mcp_use import MCPAgent
+from connectors.mcp_client import create_client_to_running_server_clickhouse
+from langchain_core.messages import HumanMessage
 
-# --- STEP 1: LOAD ALL EXTERNAL KNOWLEDGE ---
+# --- STEP 1: LOAD ALL EXTERNAL KNOWLEDGE (Remains the same) ---
 
-# Load the Analyst's "Knowledge Base"
 MANIFEST_FILENAME = "analysis_manifest.json"
 try:
     with open(MANIFEST_FILENAME, 'r') as f:
         manifest_data = json.load(f)
     raw_json_string = json.dumps(manifest_data, indent=4)
+    # Double curly braces are needed here because this JSON is part of a larger f-string prompt template.
     ANALYSIS_MANIFEST_JSON = raw_json_string.replace("{", "{{").replace("}", "}}")
     print("Analyst manifest loaded successfully.")
 except Exception as e:
     print(f"FATAL ERROR loading manifest: {e}")
     ANALYSIS_MANIFEST_JSON = "[]"
 
-# Load the Architect's "Instruction Manual"
-PROCEDURE_FILENAME = "dynamic_doc_prompt.txt"
+PROCEDURE_FILENAME = "dynamic_doc_prompt.txt" # Assuming this is the architect's procedure
 try:
     with open(PROCEDURE_FILENAME, 'r') as f:
         ARCHITECT_PROCEDURE = f.read()
@@ -103,7 +106,8 @@ except Exception as e:
     print(f"FATAL ERROR loading architect procedure: {e}")
     ARCHITECT_PROCEDURE = "Error: Procedure file not found."
 
-# --- STEP 2: CREATE THE FINAL, UNIFIED SYSTEM PROMPT ---
+# --- STEP 2: UPDATE THE ANALYST'S PROCEDURE WITHIN THE SYSTEM PROMPT ---
+
 prompt = f"""
 You are a multi-talented ClickHouse data robot. You can act as either an Analyst to run queries for a user, or as an Architect to perform system maintenance. You MUST determine the user's intent and follow the correct procedure.
 
@@ -128,24 +132,21 @@ This is your internal knowledge base for analyses.
 {ANALYSIS_MANIFEST_JSON}
 
 --- REQUIRED PROCEDURE ---
-1.  **IDENTIFY AND MATCH:** Find the JSON object in the manifest where the `analysis_type` matches the user's request. Identify the `udf_required` and `sql_template_path` values.
+1.  **IDENTIFY AND MATCH:** Find the JSON object in the manifest where the `analysis_type` matches the user's request. Identify the `sql_template_path` and a best-guess for the primary table being queried.
 2.  **VALIDATE (if necessary):** If `udf_required` is NOT `null`, call `list_user_defined_functions()` to verify the UDF exists. If not, STOP and report the error.
 3.  **RETRIEVE THE COMMAND:** Call `read_sql_query_file()` using the `sql_template_path` from the manifest.
 4.  **EXECUTE THE COMMAND:** Call `run_select_query()` with the `sql_query` returned by the previous tool.
+5.  **FORMAT THE OUTPUT:** After executing the query, summarize the results and present your entire response using the MANDATORY OUTPUT FORMAT below.
 
-======================================================================
---- ARCHITECT SOP ---
+--- MANDATORY OUTPUT FORMAT (FOR ANALYST ROLE ONLY) ---
+Your final response MUST strictly follow the markdown structure below. Do not add any conversational text or pleasantries before or after this structure.
 
---- TOOL MANIFEST ---
-You have the following specialist tools for this task:
-1.  `get_analytical_view_names()`: Use this ONCE at the beginning.
-2.  `get_view_implementation(view_name: str)`: Use this for EACH view in the list.
-3.  `insert_view_documentation(...)`: Use this for EACH view to save its metadata.
-4.  `run_select_query(query: str)`: Use this ONLY to `TRUNCATE` the catalog table before you begin.
-
---- REQUIRED PROCEDURE ---
-{ARCHITECT_PROCEDURE}
-"""
+```markdown
+---
+**Dataset:** `[The name of the primary table you queried]`
+**Question:** `[The user's original input query]`
+**Provided Answer:** `[A concise, natural language summary of the key findings from the query results.]`
+--- """
 
 # --- STEP 3: INITIALIZE THE AGENT ---
 

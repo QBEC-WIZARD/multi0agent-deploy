@@ -4,6 +4,8 @@ from fastapi.responses import JSONResponse
 import uvicorn
 from agents.clickhouse import create_clickhouse_agent
 
+from agents.auditor import create_auditor_agent
+
 agent = None
 
 @asynccontextmanager
@@ -26,7 +28,10 @@ app = FastAPI(lifespan=lifespan)
 async def ask_agent(q: str = Query(..., description="Your question for the ClickHouse agent")):
     try:
         result = await agent.run(q)
-        return JSONResponse(content={"answer": result})
+        audit_agent = create_auditor_agent()
+        audit_result = await audit_agent.run(result)
+        print(f"Audit Result: {audit_result}")
+        return JSONResponse(content={"answer": audit_result}, status_code=200)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
