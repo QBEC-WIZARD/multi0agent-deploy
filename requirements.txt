@@ -25,3 +25,7 @@ langchain_openai
 clickhouse_connect
 
 langchain_google_genai
+
+supabase 
+requests 
+python-dotenv
